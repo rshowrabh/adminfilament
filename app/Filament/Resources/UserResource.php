@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Support\Str;
 
 class UserResource extends Resource
 {
@@ -28,6 +30,11 @@ class UserResource extends Resource
             ->schema([
                 TextInput::make('name'),
                 TextInput::make('email')->email(),
+                Forms\Components\Select::make('roles')
+                    ->relationship('roles', 'name')
+                    ->multiple()
+                    ->preload()
+                    ->searchable(),
                 TextInput::make('password')->password(),
                 TextInput::make('password_confirmation')->same('password')->password()
             ]);
@@ -38,10 +45,13 @@ class UserResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')->searchable()->sortable(),
+                TextColumn::make('roles.name')
+                ->formatStateUsing(fn (string $state) => Str::of($state)->snake()->replace('_', ' ')->title())
+                ->badge(),
                 TextColumn::make('email')->searchable()->sortable()
             ])
             ->filters([
-                //
+                SelectFilter::make('roles')->relationship('roles', 'name')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
