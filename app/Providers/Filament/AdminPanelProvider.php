@@ -60,7 +60,16 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->plugins([
-                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make()
+                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
+                \Joaopaulolndev\FilamentGeneralSettings\FilamentGeneralSettingsPlugin::make()
+                ->setSort(3)
+                ->setIcon('heroicon-o-cog')
+                ->setNavigationGroup('Settings')
+                ->setTitle('General Settings')
+                ->setNavigationLabel('General Settings'),
+            ])
+            ->resources([
+                config('filament-logger.activity_resource')
             ]);
     }
 }
